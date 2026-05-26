@@ -1,9 +1,3 @@
-###
-###     S I M U L A D O R    D E    M E M Ó R I A
-###
-### Prof. Filipo - github.com/ProfessorFilipo/MemSim/
-###
-
 import sys
 
 
@@ -67,7 +61,8 @@ class TabelaPaginas:
         conforme o padrão visual exigido no enunciado do trabalho.
         """
         status = "Hit" if foi_hit else "Page Fault"
-        print(f"\n--- Passo {passo}: Acesso à Página {pagina_acessada} ({status}) ---")
+        print(
+            f"\n--- Passo {passo}: Acesso à Página {pagina_acessada} ({status}) ---")
 
         # Exemplo de iteração sobre os frames para os alunos completarem o print:
         for frame in self.frames:
@@ -87,11 +82,13 @@ class Simulador:
             with open(self.caminho_arquivo, 'r') as arquivo:
                 linhas = arquivo.readlines()
         except FileNotFoundError:
-            print(f"Erro: O arquivo '{self.caminho_arquivo}' não foi encontrado.")
+            print(
+                f"Erro: O arquivo '{self.caminho_arquivo}' não foi encontrado.")
             return
 
         # Limpa linhas vazias ou comentários se houver
-        linhas = [l.strip() for l in linhas if l.strip() and not l.strip().startswith('#')]
+        linhas = [l.strip() for l in linhas if l.strip()
+                  and not l.strip().startswith('#')]
 
         if not linhas:
             print("Erro: Arquivo de entrada vazio.")
@@ -113,7 +110,8 @@ class Simulador:
             foi_hit, frame_id = tabela_paginas.acessar_pagina(numero_pagina)
 
             # Renderiza o mapa de memória para o aluno ver o passo a passo
-            tabela_paginas.imprimir_mapa_memoria(passo, numero_pagina, foi_hit, frame_id)
+            tabela_paginas.imprimir_mapa_memoria(
+                passo, numero_pagina, foi_hit, frame_id)
             passo += 1
 
         # Exibição das estatísticas finais da simulação
@@ -121,7 +119,8 @@ class Simulador:
         print(f"Total de Acessos: {tabela_paginas.total_acessos}")
         print(f"Total de Page Faults: {tabela_paginas.total_page_faults}")
         if tabela_paginas.total_acessos > 0:
-            taxa_faults = (tabela_paginas.total_page_faults / tabela_paginas.total_acessos) * 100
+            taxa_faults = (tabela_paginas.total_page_faults /
+                           tabela_paginas.total_acessos) * 100
             print(f"Taxa de Page Faults: {taxa_faults:.2f}%")
         print("==============================================")
 
