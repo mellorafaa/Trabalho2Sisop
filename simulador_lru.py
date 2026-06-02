@@ -1,19 +1,20 @@
 import sys
-
+from collections import OrderedDict
 
 class Frame:
-    def __init__(self, id_frame):
+    def _init_(self, id_frame):
         self.id_frame = id_frame
         self.pagina_alocada = None  # Armazena o número da página ou None se estiver vazio
         # Dica para os alunos: vocês podem adicionar atributos aqui para ajudar no algoritmo (ex: timestamp, contador)
 
 
 class TabelaPaginas:
-    def __init__(self, num_frames):
+    def _init_(self, num_frames):
         # Inicializa a memória física com a quantidade de frames especificada
         self.frames = [Frame(i) for i in range(num_frames)]
         self.total_page_faults = 0
         self.total_acessos = 0
+        self.recency = OrderedDict()  
 
     def acessar_pagina(self, numero_pagina):
         self.total_acessos += 1
@@ -21,8 +22,8 @@ class TabelaPaginas:
         # 1. Verificar se a página já está em algum frame (Hit)
         for frame in self.frames:
             if frame.pagina_alocada == numero_pagina:
-                # TODO: Se necessário para o algoritmo (ex: LRU), atualize metadados aqui.
-                return True, frame.id_frame  # Retorna (Hit=True, frame_id)
+                self.recency.move_to_end(numero_pagina) 
+                return True, frame.id_frame 
 
         # 2. Se não encontrou, ocorreu um Page Fault!
         self.total_page_faults += 1
@@ -31,28 +32,18 @@ class TabelaPaginas:
         for frame in self.frames:
             if frame.pagina_alocada is None:
                 frame.pagina_alocada = numero_pagina
-                # TODO: Se necessário para o algoritmo, inicialize metadados do frame aqui.
-                return False, frame.id_frame  # Retorna (Hit=False, frame_id)
+                self.recency[numero_pagina] = frame.id_frame
+                return False, frame.id_frame  
 
         # 4. Memória cheia: Aplicar algoritmo de substituição de página
         frame_vitima_id = self.substituir_pagina(numero_pagina)
         return False, frame_vitima_id
 
     def substituir_pagina(self, nova_pagina):
-        """
-        TODO: IMPLEMENTAR PELO GRUPO
-        Esta função deve escolher uma página 'vítima' para ser substituída
-        com base no algoritmo escolhido (FIFO ou LRU), atualizar o frame
-        escolhido com a nova_pagina e retornar o ID do frame que foi alterado.
-        """
-        frame_escolhido_id = 0
-
-        # Escreva a lógica do algoritmo aqui...
-
-        # Exemplo de atualização (substitua pela lógica real):
-        # self.frames[frame_escolhido_id].pagina_alocada = nova_pagina
-
-        return frame_escolhido_id
+            pagina_vitima, frame_id = self.recency.popitem(last=False)
+            self.frames[frame_id].pagina_alocada = nova_pagina
+            self.recency[nova_pagina] = frame_id
+            return frame_id
 
     def imprimir_mapa_memoria(self, passo, pagina_acessada, foi_hit, frame_alterado=None):
         """
@@ -74,7 +65,7 @@ class TabelaPaginas:
 
 
 class Simulador:
-    def __init__(self, caminho_arquivo):
+    def _init_(self, caminho_arquivo):
         self.caminho_arquivo = caminho_arquivo
 
     def executar(self):
@@ -125,7 +116,7 @@ class Simulador:
         print("==============================================")
 
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     # Permite passar o arquivo de entrada por argumento de linha de comando ou usa um padrão
     arquivo_entrada = sys.argv[1] if len(sys.argv) > 1 else "entrada.txt"
     simulador = Simulador(arquivo_entrada)
