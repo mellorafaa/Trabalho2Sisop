@@ -9,14 +9,16 @@ class Frame:
 
 
 class TabelaPaginas:
-    def __init__(self, num_frames):
-        # Inicializa a memória física com a quantidade de frames especificada
+    def __init__(self, num_frames, sequencia_paginas):
         self.frames = [Frame(i) for i in range(num_frames)]
         self.total_page_faults = 0
         self.total_acessos = 0
+        self.sequencia_paginas = sequencia_paginas  # lista completa de acessos
+        self.passo_atual = 0   
 
     def acessar_pagina(self, numero_pagina):
         self.total_acessos += 1
+        self.passo_atual += 1
 
         # 1. Verificar se a página já está em algum frame (Hit)
         for frame in self.frames:
@@ -39,20 +41,25 @@ class TabelaPaginas:
         return False, frame_vitima_id
 
     def substituir_pagina(self, nova_pagina):
-        """
-        TODO: IMPLEMENTAR PELO GRUPO
-        Esta função deve escolher uma página 'vítima' para ser substituída
-        com base no algoritmo escolhido (FIFO ou LRU), atualizar o frame
-        escolhido com a nova_pagina e retornar o ID do frame que foi alterado.
-        """
+        futuro = self.sequencia_paginas[self.passo_atual:]  # acessos que ainda virão
+
+        farthest = -1
         frame_escolhido_id = 0
 
-        # Escreva a lógica do algoritmo aqui...
+        for frame in self.frames:
+            try:
+                proxima_vez = futuro.index(frame.pagina_alocada)
+            except ValueError:
+                # Página nunca mais será usada: melhor candidata imediata
+                frame_escolhido_id = frame.id_frame
+                break
+            if proxima_vez > farthest:
+                farthest = proxima_vez
+                frame_escolhido_id = frame.id_frame
 
-        # Exemplo de atualização (substitua pela lógica real):
-        # self.frames[frame_escolhido_id].pagina_alocada = nova_pagina
-
+        self.frames[frame_escolhido_id].pagina_alocada = nova_pagina
         return frame_escolhido_id
+
 
     def imprimir_mapa_memoria(self, passo, pagina_acessada, foi_hit, frame_alterado=None):
         """
@@ -96,22 +103,17 @@ class Simulador:
 
         # A primeira linha válida define o número de frames na memória RAM simulada
         num_frames = int(linhas[0])
-        tabela_paginas = TabelaPaginas(num_frames)
+        sequencia = [int(l) for l in linhas[1:]]
+        tabela_paginas = TabelaPaginas(num_frames, sequencia)
 
         print(f"Iniciando simulação com {num_frames} frames disponíveis.")
         print("=" * 40)
 
         # As linhas seguintes são a sequência de acessos às páginas
         passo = 1
-        for linha in linhas[1:]:
-            numero_pagina = int(linha)
-
-            # Processa o acesso na tabela de páginas
+        for numero_pagina in sequencia:   # <-- muda aqui
             foi_hit, frame_id = tabela_paginas.acessar_pagina(numero_pagina)
-
-            # Renderiza o mapa de memória para o aluno ver o passo a passo
-            tabela_paginas.imprimir_mapa_memoria(
-                passo, numero_pagina, foi_hit, frame_id)
+            tabela_paginas.imprimir_mapa_memoria(passo, numero_pagina, foi_hit, frame_id)
             passo += 1
 
         # Exibição das estatísticas finais da simulação
