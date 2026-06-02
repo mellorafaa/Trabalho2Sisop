@@ -1,18 +1,20 @@
 import sys
 
+
 class Frame:
     def __init__(self, id_frame):
         self.id_frame = id_frame
         self.pagina_alocada = None
         self.ultimo_acesso = 0
 
+
 class TabelaPaginas:
     def __init__(self, num_frames, sequencia_paginas):
         self.frames = [Frame(i) for i in range(num_frames)]
         self.total_page_faults = 0
         self.total_acessos = 0
-        self.sequencia_paginas = sequencia_paginas  
-        self.passo_atual = 0   
+        self.sequencia_paginas = sequencia_paginas
+        self.passo_atual = 0
 
     def acessar_pagina(self, numero_pagina):
         self.total_acessos += 1
@@ -59,7 +61,6 @@ class TabelaPaginas:
         self.frames[frame_escolhido_id].pagina_alocada = nova_pagina
         return frame_escolhido_id
 
-
     def imprimir_mapa_memoria(self, passo, pagina_acessada, foi_hit, frame_alterado=None):
         status = "Hit" if foi_hit else "Page Fault"
         print(
@@ -71,6 +72,7 @@ class TabelaPaginas:
             print(f"[Frame {frame.id_frame}]: {conteudo}{marcador}")
 
         print("-" * 40)
+
 
 class Simulador:
     def __init__(self, caminho_arquivo):
@@ -100,9 +102,10 @@ class Simulador:
         print("=" * 40)
 
         passo = 1
-        for numero_pagina in sequencia:   
+        for numero_pagina in sequencia:
             foi_hit, frame_id = tabela_paginas.acessar_pagina(numero_pagina)
-            tabela_paginas.imprimir_mapa_memoria(passo, numero_pagina, foi_hit, frame_id)
+            tabela_paginas.imprimir_mapa_memoria(
+                passo, numero_pagina, foi_hit, frame_id)
             passo += 1
 
         print("\n================ STATS FINAIS ================")
