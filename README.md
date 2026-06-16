@@ -2,8 +2,10 @@
 
 ## Integrantes
 
-- Arthur
-- Matheus
+- João Araujo
+- Lucas Afonso
+- Arthur Ferreira
+- Matheus Corbellini
 - Rafaela
 - Vinicius
 
