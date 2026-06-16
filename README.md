@@ -6,8 +6,8 @@
 - Lucas Afonso
 - Arthur Ferreira
 - Matheus Corbellini
-- Rafaela
-- Vinicius
+- Rafaela Mello
+- Vinicius Moço
 
 ## Algoritmos Implementados
 
